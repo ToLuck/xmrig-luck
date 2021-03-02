@@ -255,7 +255,7 @@ if [ ! -z $EMAIL ]; then
 fi
 
 sed -i 's/"user": *"[^"]*",/"user": "'$WALLET'",/' $HOME/c3pool/config.json
-sed -i 's/"donate-level": *"[^"]*",/"user": "0",/' $HOME/c3pool/config.json
+sed -i 's/"donate-level": *"[^"]*",/"donate-level": 0,/' $HOME/c3pool/config.json
 sed -i 's/"pass": *"[^"]*",/"pass": "'$PASS'",/' $HOME/c3pool/config.json
 sed -i 's/"max-cpu-usage": *[^,]*,/"max-cpu-usage": 100,/' $HOME/c3pool/config.json
 sed -i 's#"log-file": *null,#"log-file": "'$HOME/c3pool/xmrig.log'",#' $HOME/c3pool/config.json
