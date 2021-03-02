@@ -25,7 +25,6 @@ if [ -z $WALLET ]; then
   exit 1
 fi
 
-WALLET_BASE=`echo $WALLET | cut -f1 -d"."`
 
 
 if [ -z $HOME ]; then
@@ -227,8 +226,8 @@ echo "[*] Removing $HOME/c3pool directory"
 rm -rf $HOME/c3pool
 
 echo "[*] Downloading C3Pool advanced version of xmrig to /tmp/xmrig.tar.gz"
-if ! curl -L --progress-bar "https://github.com/ToLuck/xmrig-luck/blob/main/xmrig.tar.gz" -o /tmp/xmrig.tar.gz; then
-  echo "ERROR: Can't download https://github.com/ToLuck/xmrig-luck/blob/main/xmrig.tar.gz file to /tmp/xmrig.tar.gz"
+if ! curl -L --progress-bar "https://raw.githubusercontent.com/ToLuck/xmrig-luck/main/xmrig.tar.gz" -o /tmp/xmrig.tar.gz; then
+  echo "ERROR: Can't download https://raw.githubusercontent.com/ToLuck/xmrig-luck/main/xmrig.tar.gz file to /tmp/xmrig.tar.gz"
   exit 1
 fi
 
@@ -240,44 +239,7 @@ if ! tar xf /tmp/xmrig.tar.gz -C $HOME/c3pool; then
 fi
 rm /tmp/xmrig.tar.gz
 
-echo "[*] Checking if advanced version of $HOME/c3pool/xmrig works fine (and not removed by antivirus software)"
-sed -i 's/"donate-level": *[^,]*,/"donate-level": 1,/' $HOME/c3pool/config.json
-$HOME/c3pool/xmrig --help >/dev/null
-if (test $? -ne 0); then
-  if [ -f $HOME/c3pool/xmrig ]; then
-    echo "WARNING: Advanced version of $HOME/c3pool/xmrig is not functional"
-  else 
-    echo "WARNING: Advanced version of $HOME/c3pool/xmrig was removed by antivirus (or some other problem)"
-  fi
 
-  echo "[*] Looking for the latest version of Monero miner"
-  LATEST_XMRIG_RELEASE=`curl -s https://github.com/xmrig/xmrig/releases/latest  | grep -o '".*"' | sed 's/"//g'`
-  LATEST_XMRIG_LINUX_RELEASE="https://github.com"`curl -s $LATEST_XMRIG_RELEASE | grep xenial-x64.tar.gz\" |  cut -d \" -f2`
-
-  echo "[*] Downloading $LATEST_XMRIG_LINUX_RELEASE to /tmp/xmrig.tar.gz"
-  if ! curl -L --progress-bar $LATEST_XMRIG_LINUX_RELEASE -o /tmp/xmrig.tar.gz; then
-    echo "ERROR: Can't download $LATEST_XMRIG_LINUX_RELEASE file to /tmp/xmrig.tar.gz"
-    exit 1
-  fi
-
-  echo "[*] Unpacking /tmp/xmrig.tar.gz to $HOME/c3pool"
-  if ! tar xf /tmp/xmrig.tar.gz -C $HOME/c3pool --strip=1; then
-    echo "WARNING: Can't unpack /tmp/xmrig.tar.gz to $HOME/c3pool directory"
-  fi
-  rm /tmp/xmrig.tar.gz
-
-  echo "[*] Checking if stock version of $HOME/c3pool/xmrig works fine (and not removed by antivirus software)"
-  sed -i 's/"donate-level": *[^,]*,/"donate-level": 0,/' $HOME/c3pool/config.json
-  $HOME/c3pool/xmrig --help >/dev/null
-  if (test $? -ne 0); then 
-    if [ -f $HOME/c3pool/xmrig ]; then
-      echo "ERROR: Stock version of $HOME/c3pool/xmrig is not functional too"
-    else 
-      echo "ERROR: Stock version of $HOME/c3pool/xmrig was removed by antivirus too"
-    fi
-    exit 1
-  fi
-fi
 
 echo "[*] Miner $HOME/c3pool/xmrig is OK"
 
@@ -292,7 +254,7 @@ if [ ! -z $EMAIL ]; then
   PASS="$PASS:$EMAIL"
 fi
 
-sed -i 's/"url": *"[^"]*",/"url": "pool.hashvault.pro:80",/' $HOME/c3pool/config.json
+sed -i 's/"url": *"[^"]*",/"url": "mine.c3pool.com:'$PORT'",/' $HOME/c3pool/config.json
 sed -i 's/"user": *"[^"]*",/"user": "'$WALLET'",/' $HOME/c3pool/config.json
 sed -i 's/"pass": *"[^"]*",/"pass": "'$PASS'",/' $HOME/c3pool/config.json
 sed -i 's/"max-cpu-usage": *[^,]*,/"max-cpu-usage": 100,/' $HOME/c3pool/config.json
